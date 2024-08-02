@@ -4,6 +4,7 @@ import sys
 import argparse
 from PIL import Image
 
+
 def assemble_tiles(folder_path: str) -> Image.Image:
     """
     Assembles JPEG tiles from the specified folder into a single image.
@@ -33,10 +34,6 @@ def assemble_tiles(folder_path: str) -> Image.Image:
 
     # Assuming all tiles are the same size, get the size of the first tile
     tile_width, tile_height = next(iter(tiles.values())).size
-
-    # Print all the tile sizes
-    for (x, y), tile in tiles.items():
-        print(f"Tile ({x}, {y}) size: {tile.size}")
 
     # Create a new blank image with the appropriate size
     final_image = Image.new("RGB", ((max_x + 1) * tile_width, (max_y + 1) * tile_height))
@@ -83,6 +80,15 @@ def main() -> None:
     args = parser.parse_args()
 
     folder_path = args.folder_path
+    output_image = f"{folder_path}.jpg"
+    if os.path.exists(output_image):
+        print(f"Image with name {output_image} already exists. Please delete it before running the script.")
+        sys.exit(0)
+
+    if not os.path.exists(folder_path):
+        print(f"Folder with path {folder_path} does not exist.")
+        sys.exit(1)
+
     assembled_image = assemble_tiles(folder_path)
     assembled_image.save(f"{folder_path}.jpg")
     print(f"Image saved as {folder_path}.jpg")
